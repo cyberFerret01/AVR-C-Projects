@@ -54,7 +54,7 @@ ISR(INT0_vect){
 	srand(TCNT0);
 
 
-	switch(rand()%3)
+	switch(rand()%6)
 	{
 		case 0:
 		PORTB = 0b1;
@@ -65,23 +65,44 @@ ISR(INT0_vect){
 		break;
 		
 		case 2:
-		PORTB = 0b100;
+		PORTB = 0b11;
 		break;
 		
+		case 3:
+		PORTB = 0b1010;
+		break;
+		
+		case 4:
+		PORTB = 0b1011;
+		break;
+		
+		case 5:
+		PORTB = 0b1110;
+		break;
+		
+		
+		
 		default:
-			PORTB = 0b111;
-	
+			PORTB = 0b1111;
+	}
+/*
+
+	for(int i = 0; i < 4; i++){
+		
+		PORTB |= (1 << i);
+			
 	
 	
 				//PORTB = 0b10;
 				//PORTB = 0b100;
 	
-	}
+	
 	
 			
 		
 			
 			//OCR1A = p;
+			*/
 			TCCR1A = 0;
 			TCCR1B =0b01101;
 					
