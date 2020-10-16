@@ -25,6 +25,9 @@ unsigned long seed = 0;
 
 int main(void)
 {
+	
+	TCCR0A = 0;
+	TCCR0B = 0x05;
 
 	//
 	DDRB=0xFF;
@@ -48,17 +51,37 @@ int main(void)
 
 ISR(INT0_vect){
 	
-	srand(89);
-	
-	int p = rand()%7;
-	p++;
+	srand(TCNT0);
 
+
+	switch(rand()%3)
+	{
+		case 0:
+		PORTB = 0b1;
+		break;
+		
+		case 1:
+		PORTB = 0b10;
+		break;
+		
+		case 2:
+		PORTB = 0b100;
+		break;
+		
+		default:
+			PORTB = 0b111;
 	
-	for(int i = 0; i < 3; i++){
+	
+	
+				//PORTB = 0b10;
+				//PORTB = 0b100;
+	
+	}
+	
 			
-		PORTB |= (1 << i);
+		
 			
-			OCR1A = p;
+			//OCR1A = p;
 			TCCR1A = 0;
 			TCCR1B =0b01101;
 					
@@ -68,7 +91,7 @@ ISR(INT0_vect){
 			TCCR1B =0;
 			TIFR1 = 1<<OCF1A;
 
-	}
+	
 	
 	PORTB=0b00;
 	
