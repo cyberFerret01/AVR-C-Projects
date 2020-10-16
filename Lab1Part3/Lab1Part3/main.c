@@ -1,8 +1,8 @@
 /*
- * Lab1.c
+ * Lab1Part3.c
  *
- * Created: 03/10/2020 13:40:01
- * Author : Robert Nicoll (rn37)
+ * Created: 16/10/2020 01:11:26
+ * Author : bear
  */ 
 
 #include<avr/io.h>
@@ -48,13 +48,17 @@ int main(void)
 
 ISR(INT0_vect){
 	
-	srand(seed);
+	srand(89);
+	
+	int p = rand()%7;
+	p++;
+
 	
 	for(int i = 0; i < 3; i++){
 			
 		PORTB |= (1 << i);
 			
-			//OCR1A = 0x7A12;
+			OCR1A = p;
 			TCCR1A = 0;
 			TCCR1B =0b01101;
 					
@@ -71,5 +75,7 @@ ISR(INT0_vect){
 	
 	seed++;
 }
+
+
 
 
