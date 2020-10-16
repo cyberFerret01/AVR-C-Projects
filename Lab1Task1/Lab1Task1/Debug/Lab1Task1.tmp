@@ -22,6 +22,7 @@
   <FILE>Lab1Task1.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <L1><FILE>C:\Users\bear\Documents\GitHub\EmbeddedSystemsLabs\Lab1Task1\Lab1Task1\main.asm</FILE><LINE>15</LINE></L1>
+  <BEGIN><FILE>C:\Users\bear\Documents\GitHub\EmbeddedSystemsLabs\Lab1Task1\Lab1Task1\main.asm</FILE><LINE>28</LINE></BEGIN>
+  <AGAIN><FILE>C:\Users\bear\Documents\GitHub\EmbeddedSystemsLabs\Lab1Task1\Lab1Task1\main.asm</FILE><LINE>32</LINE></AGAIN>
  </LABELS>
 </ASSEMBLER_INFO>

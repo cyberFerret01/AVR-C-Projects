@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\bear\Documents\GitHub\EmbeddedSystemsLabs\Lab1Task1\Lab1Task1\main.asm Fri Oct 16 20:12:38 2020
+AVRASM ver. 2.2.7  C:\Users\bear\Documents\GitHub\EmbeddedSystemsLabs\Lab1Task1\Lab1Task1\main.asm Fri Oct 16 23:20:21 2020
 
 
 EQU  SIGNATURE_000 0000001e
@@ -695,4 +695,5 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
-CSEG L1           00000003
+CSEG BEGIN        0000000b
+CSEG AGAIN        00000011
