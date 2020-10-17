@@ -15,26 +15,29 @@
 ;
 		 LDI R23, 0b10100100 ; load R23 with calculated delay value
 		 LDI R24, 0b11001010
-		 LDI R16, 0b0000111
+		 LDI R16, 0b00000111
 		 OUT DDRB, R16 ;PB3 as an output  
 
-		 LDI R16,0b0000111 ;R16 = 0x08  
-
-		 LDI R17,0    
-		 OUT PORTB,R17
+		 LDI R16,0;111 ;R16 = 0x08 
+		 LDI R17,0b1
+    
+		 OUT PORTB,R16
 		 		     
 		 STS OCR1AH,R23      
 		 STS OCR1AL,R24
-BEGIN:	 LDI R20,0x00 ;TCCR0A=0x02  
-		 STS TCCR1A,R20       ;CTC mode 
-		 LDI R20, 0b01101  ;TCCR0B = 1  
-		 STS TCCR1B,R20       ;int. clk
-AGAIN:   SBIS     TIFR1,OCF1A;if OCF0 is set skip next
+BEGIN:	 LDI R20,0x00  
+		 STS TCCR1A,R20       
+		 LDI R20, 0b01101  
+		 STS TCCR1B,R20     
+AGAIN:   SBIS     TIFR1,OCF1A
 		 RJMP AGAIN  
 		 LDI R20,0x00 
-		 STS TCCR1B,R20 ;stop Timer0 
-		 LDI R20,1<<OCF0A 
-		 OUT TIFR1,R20 ;clear OCF0A flag   
-		 EOR R17,R16  ;toggle D3 of R17  
-		 OUT PORTB,R17 ;toggle PB3  
+		 STS TCCR1B,R20  
+		 LDI R20,1<<OCF1A 
+		 OUT TIFR1,R20   
+
+		 OR R16,R17
+		 LSL R17
+		 OUT PORTB,R16  
+	
 		 RJMP  BEGIN
