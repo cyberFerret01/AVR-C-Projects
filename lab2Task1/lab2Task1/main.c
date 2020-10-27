@@ -30,44 +30,62 @@ int main(void)
  
  TCCR0A=0x83;
 
-int buttonState = 0;	
+	DDRB |= ( 1<<5) ; //Make pin 4 of port D as a output
 
- while(1){
-	 
-	 switch(buttonState){
-		 case 0:
-		 //0
-		 //0
-		 OCR0A=0x00;
-		 PORTB |= (1<<5);
-		 break;
-		 
-		 case 1:
-		 //25
-		 //63 -3f
-		 OCR0A=0x3f;
-		 break;
-		 
-		 case 2:
-		 //62.5
-		 //159 - 9f
-		 OCR0A=0x9f;
-		 break;
-		 
-		 case 3:
-		 //87.5
-		 //223 - df
-		 OCR0A=0xdf;
-		 
-		 break;
-	 }
-	 TCCR0B=0b101;
-	 
-	 buttonState++;
-	 
-	 _delay_ms(2000);
-	 
-	 
+	DDRC = 0x00; // Make pin 5 of port C as a input
+
+	while (1) //initialize while loop
+
+	{
+		
+		for (int i = 2; i <6; i++)
+		{
+			
+			if(PINC & (1<<i) ) //if PIN5 of port C is high
+
+			{
+				_delay_ms(10);
+			}
+			if(PINC & (1<<i) ) //if PIN5 of port C is high
+
+			{
+
+				switch(i){
+					case 3:
+					//0
+					//0
+					OCR0A=0x00;
+					PORTB |= (1<<5);
+					break;
+					
+					case 4:
+					//25
+					//63 -3f
+					OCR0A=0x3f;
+					break;
+					
+					case 5:
+					//62.5
+					//159 - 9f
+					OCR0A=0x9f;
+					break;
+					
+					case 2:
+					//87.5
+					//223 - df
+					OCR0A=0xdf;
+					
+					break;
+				}
+				TCCR0B=0b101;
+
+			}
+			
+		}
+		
+
+
+ 
 
 
 	/* 
