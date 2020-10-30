@@ -12,9 +12,13 @@
 int main(void)
 {
 	
+	int PWM = 0;
+	int PWMPot = 0;
+	int PWMPotMeasured = 0;
+	
 	DDRB = 0b11;
 	PORTB = 0b01; 
- DDRD|=(1<<2)|(1<<3);
+ //DDRD|=(1<<2)|(1<<3);
  PORTD=0x08;//OCR0A PWM, set PortD.6 output
  DDRD|=(1<<6);//set OCR0A PWM, fast PWM, no prescaler, non-inverted
  
@@ -27,6 +31,14 @@ int main(void)
 	while (1) //initialize while loop
 
 	{
+		
+		//read pot and set it to PWMPotMeasured
+		
+		if (PWMPot != PWMPotMeasured)
+		{
+			PWM = PWMPotMeasured;
+			PWMPot = PWMPotMeasured;
+		}
 		
 		
 		for (int i = 1; i <6; i++)
@@ -49,31 +61,37 @@ int main(void)
 					case 2:
 					//87.5
 					//223 - df
-					OCR0A=0xdf;
+					PWM=0xdf;
 															
 					break;
 					case 3:
 					//0
 					//0
-					OCR0A=0x00;
+					PWM=0x00;
 					PORTB |= (1<<5);
 					break;
 					
 					case 4:
 					//25
 					//63 -3f
-					OCR0A=0x3f;
+					PWM=0x3f;
 					break;
 					
 					case 5:
 					//62.5
 					//159 - 9f
-					OCR0A=0x9f;
+					PWM=0x9f;
 					break;
 				}
-				TCCR0B=0b101;
+				
 
 			}
+			
+			
+			
+			OCR0A = PWM;
+			TCCR0B=0b101;
+			
 			
 		}
 	}
