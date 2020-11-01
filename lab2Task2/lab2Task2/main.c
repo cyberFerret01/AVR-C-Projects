@@ -9,48 +9,61 @@
 #include <util/delay.h>
 
 
+
+
 int main(void)
 {
+	
+	ADMUX|=(1<<REFS0); //set reference voltage
+	ADCSRA|=(1<<ADPS1)|(1<<ADPS0);//ADC clock prescaler/ 8
+	ADCSRA|=(1<<ADEN);//enables the ADC
 	
 	int PWM = 0;
 	int PWMPot = 0;
 	int PWMPotMeasured = 0;
 	
-	DDRB = 0b11;
-	PORTB = 0b01; 
- //DDRD|=(1<<2)|(1<<3);
- PORTD=0x08;//OCR0A PWM, set PortD.6 output
- DDRD|=(1<<6);//set OCR0A PWM, fast PWM, no prescaler, non-inverted
+	 DDRB = 0b11;
+	 DDRC = 0x00;
+	 PORTB = 0b01; 
+	 PORTD=0x08;
+	 DDRD|=(1<<6);
  
- TCCR0A=0x83;
+	 TCCR0A=0x83;
 
-	DDRB |= ( 1<<5) ; //Make pin 4 of port D as a output
-
-	DDRC = 0x00; // Make pin 5 of port C as a input
+	
 
 	while (1) //initialize while loop
 
 	{
 		
+		ADCSRA|=(1<<ADSC);//start ADC conversion
+		while((ADCSRA&(1<<ADSC))){} // wait till the ADC is done
+		uint8_t theLowADC=ADCL; //read lower bits
+		PWMPotMeasured=ADCH << 8|theLowADC; //read upper bits
+		
 		//read pot and set it to PWMPotMeasured
 		
+		_delay_ms(10);
 		if (PWMPot != PWMPotMeasured)
 		{
-			PWM = PWMPotMeasured;
-			PWMPot = PWMPotMeasured;
+			_delay_ms(10); //software debounce
+					if (PWMPot > PWMPotMeasured+10 || PWMPot < PWMPotMeasured-10) //check to see if the pot has changed by a small amount
+					{
+					PWM = (PWMPotMeasured%1024)/4; //set pwm in range of 0 - 256
+					PWMPot = PWMPotMeasured; //set new base value to compare aginst
+					}
 		}
 		
-		
+		//poll switches
 		for (int i = 1; i <6; i++)
 		{
-			
-			if(PINC & (1<<i) ) //if PIN5 of port C is high
+			//check if a button is pressed then use software debounce
+			if(PINC & (1<<i) ) 
 
 			{
 				_delay_ms(10);
 			}
-			if(PINC & (1<<i) ) //if PIN5 of port C is high
-
+			if(PINC & (1<<i) ) 
 			{
 
 				switch(i){

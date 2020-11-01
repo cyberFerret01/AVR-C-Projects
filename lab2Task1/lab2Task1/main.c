@@ -12,7 +12,7 @@
 int main(void)
 {
 	
-	DDRB = 0x20;
+	DDRB = 0x20; //pin 13 debug
 	//5 high
 	
     /* Replace with your application code */
@@ -24,29 +24,26 @@ int main(void)
 		_delay_ms(1000);
     }
 	*/
- DDRD|=(1<<2)|(1<<3);
+
  PORTD=0x08;//OCR0A PWM, set PortD.6 output
  DDRD|=(1<<6);//set OCR0A PWM, fast PWM, no prescaler, non-inverted
  
- TCCR0A=0x83;
-
-	DDRB |= ( 1<<5) ; //Make pin 4 of port D as a output
-
-	DDRC = 0x00; // Make pin 5 of port C as a input
+	TCCR0A=0x83;
+	DDRC = 0x00; 
 
 	while (1) //initialize while loop
 
 	{
-		
+		//poll all the switches o check to see if any have been pressed
 		for (int i = 2; i <6; i++)
 		{
 			
 			if(PINC & (1<<i) ) //if PIN5 of port C is high
 
 			{
-				_delay_ms(10);
+				_delay_ms(10); //debounce
 			}
-			if(PINC & (1<<i) ) //if PIN5 of port C is high
+			if(PINC & (1<<i))
 
 			{
 
