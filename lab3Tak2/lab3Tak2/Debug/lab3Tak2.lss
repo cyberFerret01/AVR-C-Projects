@@ -3,29 +3,29 @@ lab3Tak2.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  000005d2  2**0
+  0 .data         00000000  00800100  00800100  000005ba  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000057e  00000000  00000000  00000054  2**1
+  1 .text         00000566  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  000005d2  2**0
+  2 .comment      00000030  00000000  00000000  000005ba  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000604  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000005ec  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 000000e0  00000000  00000000  00000644  2**0
+  4 .debug_aranges 000000e0  00000000  00000000  0000062c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000183f  00000000  00000000  00000724  2**0
+  5 .debug_info   00001802  00000000  00000000  0000070c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000081b  00000000  00000000  00001f63  2**0
+  6 .debug_abbrev 0000081b  00000000  00000000  00001f0e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000a74  00000000  00000000  0000277e  2**0
+  7 .debug_line   00000a62  00000000  00000000  00002729  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000230  00000000  00000000  000031f4  2**2
+  8 .debug_frame  00000230  00000000  00000000  0000318c  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000004fe  00000000  00000000  00003424  2**0
+  9 .debug_str    000004fe  00000000  00000000  000033bc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000d4c  00000000  00000000  00003922  2**0
+ 10 .debug_loc    00000d04  00000000  00000000  000038ba  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000000d0  00000000  00000000  0000466e  2**0
+ 11 .debug_ranges 000000d0  00000000  00000000  000045be  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -66,7 +66,7 @@ Disassembly of section .text:
   70:	de bf       	out	0x3e, r29	; 62
   72:	cd bf       	out	0x3d, r28	; 61
   74:	0e 94 5f 02 	call	0x4be	; 0x4be <main>
-  78:	0c 94 bd 02 	jmp	0x57a	; 0x57a <_exit>
+  78:	0c 94 b1 02 	jmp	0x562	; 0x562 <_exit>
 
 0000007c <__bad_interrupt>:
   7c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -520,10 +520,10 @@ void Lcd4_Shift_Left()
  41a:	08 95       	ret
 
 0000041c <USART_send>:
-#include "lcd.h"
 #include <util/delay.h>
 #include <string.h>
 
+//send to serial port
 void USART_send(unsigned char data){
 	while(!(UCSR0A&(1<<UDRE0)));  // check if data is sent
  41c:	e0 ec       	ldi	r30, 0xC0	; 192
@@ -538,7 +538,7 @@ void USART_send(unsigned char data){
 0000042c <USART_putstring>:
 }
 
-
+//send char array to serial port
 void USART_putstring(unsigned char* fullstring){
  42c:	cf 93       	push	r28
  42e:	df 93       	push	r29
@@ -554,7 +554,7 @@ void USART_putstring(unsigned char* fullstring){
  43a:	0e 94 0e 02 	call	0x41c	; 0x41c <USART_send>
 }
 
-
+//send char array to serial port
 void USART_putstring(unsigned char* fullstring){
 	
 	while (*fullstring != 0x00)
@@ -588,6 +588,7 @@ void USART_init(void){
 00000462 <USART_receive>:
 }
 
+//receieve from serial port
 unsigned char USART_receive(void){
 	while(!(UCSR0A&(1<<RXC0)));  // Wait to receive data
  462:	e0 ec       	ldi	r30, 0xC0	; 192
@@ -603,7 +604,7 @@ unsigned char USART_receive(void){
 00000472 <USART_getstring>:
 
 
-	
+//receive from serial port	
 int  USART_getstring(unsigned char *phrase){
  472:	ef 92       	push	r14
  474:	ff 92       	push	r15
@@ -613,16 +614,19 @@ int  USART_getstring(unsigned char *phrase){
  47c:	df 93       	push	r29
  47e:	7c 01       	movw	r14, r24
 	
+	// initalize function by getting first char from serial port and setting the length counter to 0
 	char c = USART_receive();
  480:	0e 94 31 02 	call	0x462	; 0x462 <USART_receive>
 	int j =0;
 	
+	//get next char until we get \n (denotes end of incomming string)
 	while(c != '\n'){
  484:	8a 30       	cpi	r24, 0x0A	; 10
  486:	61 f0       	breq	.+24     	; 0x4a0 <USART_getstring+0x2e>
  488:	87 01       	movw	r16, r14
  48a:	c0 e0       	ldi	r28, 0x00	; 0
  48c:	d0 e0       	ldi	r29, 0x00	; 0
+		//store char in memory location
 		phrase[j] = c;
  48e:	f8 01       	movw	r30, r16
  490:	81 93       	st	Z+, r24
@@ -631,24 +635,24 @@ int  USART_getstring(unsigned char *phrase){
  494:	21 96       	adiw	r28, 0x01	; 1
 		c = USART_receive();
  496:	0e 94 31 02 	call	0x462	; 0x462 <USART_receive>
-int  USART_getstring(unsigned char *phrase){
-	
+	// initalize function by getting first char from serial port and setting the length counter to 0
 	char c = USART_receive();
 	int j =0;
 	
+	//get next char until we get \n (denotes end of incomming string)
 	while(c != '\n'){
  49a:	8a 30       	cpi	r24, 0x0A	; 10
  49c:	c1 f7       	brne	.-16     	; 0x48e <USART_getstring+0x1c>
  49e:	02 c0       	rjmp	.+4      	; 0x4a4 <USART_getstring+0x32>
-
-	
+//receive from serial port	
 int  USART_getstring(unsigned char *phrase){
 	
+	// initalize function by getting first char from serial port and setting the length counter to 0
 	char c = USART_receive();
 	int j =0;
  4a0:	c0 e0       	ldi	r28, 0x00	; 0
  4a2:	d0 e0       	ldi	r29, 0x00	; 0
-	while(c != '\n'){
+		//store char in memory location
 		phrase[j] = c;
 		j++;
 		c = USART_receive();
@@ -658,7 +662,7 @@ int  USART_getstring(unsigned char *phrase){
  4a6:	ec 0f       	add	r30, r28
  4a8:	fd 1f       	adc	r31, r29
  4aa:	10 82       	st	Z, r1
-
+	// return the length of the string
 	return j+1;
 }
  4ac:	ce 01       	movw	r24, r28
@@ -686,60 +690,58 @@ int main(void){
  4cc:	de bf       	out	0x3e, r29	; 62
  4ce:	0f be       	out	0x3f, r0	; 63
  4d0:	cd bf       	out	0x3d, r28	; 61
-	USART_init();
- 4d2:	0e 94 25 02 	call	0x44a	; 0x44a <USART_init>
-
-	int i = 3;
+	
+	int i = 0;
 	DDRD=0xFF;
- 4d6:	8f ef       	ldi	r24, 0xFF	; 255
- 4d8:	8a b9       	out	0x0a, r24	; 10
+ 4d2:	8f ef       	ldi	r24, 0xFF	; 255
+ 4d4:	8a b9       	out	0x0a, r24	; 10
 	DDRB=0xFF;
- 4da:	84 b9       	out	0x04, r24	; 4
-	unsigned char string [40] = "owo";
- 4dc:	8f e6       	ldi	r24, 0x6F	; 111
- 4de:	97 e7       	ldi	r25, 0x77	; 119
- 4e0:	9a 83       	std	Y+2, r25	; 0x02
- 4e2:	89 83       	std	Y+1, r24	; 0x01
- 4e4:	8f e6       	ldi	r24, 0x6F	; 111
- 4e6:	90 e0       	ldi	r25, 0x00	; 0
- 4e8:	9c 83       	std	Y+4, r25	; 0x04
- 4ea:	8b 83       	std	Y+3, r24	; 0x03
- 4ec:	fe 01       	movw	r30, r28
- 4ee:	35 96       	adiw	r30, 0x05	; 5
- 4f0:	84 e2       	ldi	r24, 0x24	; 36
- 4f2:	df 01       	movw	r26, r30
- 4f4:	1d 92       	st	X+, r1
- 4f6:	8a 95       	dec	r24
- 4f8:	e9 f7       	brne	.-6      	; 0x4f4 <main+0x36>
-	string[0] = 'o';
- 4fa:	8f e6       	ldi	r24, 0x6F	; 111
- 4fc:	89 83       	std	Y+1, r24	; 0x01
+ 4d6:	84 b9       	out	0x04, r24	; 4
+	unsigned char string [40] = "ooo";
+ 4d8:	8f e6       	ldi	r24, 0x6F	; 111
+ 4da:	9f e6       	ldi	r25, 0x6F	; 111
+ 4dc:	9a 83       	std	Y+2, r25	; 0x02
+ 4de:	89 83       	std	Y+1, r24	; 0x01
+ 4e0:	8f e6       	ldi	r24, 0x6F	; 111
+ 4e2:	90 e0       	ldi	r25, 0x00	; 0
+ 4e4:	9c 83       	std	Y+4, r25	; 0x04
+ 4e6:	8b 83       	std	Y+3, r24	; 0x03
+ 4e8:	fe 01       	movw	r30, r28
+ 4ea:	35 96       	adiw	r30, 0x05	; 5
+ 4ec:	84 e2       	ldi	r24, 0x24	; 36
+ 4ee:	df 01       	movw	r26, r30
+ 4f0:	1d 92       	st	X+, r1
+ 4f2:	8a 95       	dec	r24
+ 4f4:	e9 f7       	brne	.-6      	; 0x4f0 <main+0x32>
+	//start lcd library and initialize the lcd as blank and start serial communication
 	Lcd4_Init();
- 4fe:	0e 94 94 01 	call	0x328	; 0x328 <Lcd4_Init>
+ 4f6:	0e 94 94 01 	call	0x328	; 0x328 <Lcd4_Init>
 	Lcd4_Clear();
- 502:	0e 94 8d 01 	call	0x31a	; 0x31a <Lcd4_Clear>
-		
-		
-		
-		
-		
+ 4fa:	0e 94 8d 01 	call	0x31a	; 0x31a <Lcd4_Clear>
+	USART_init();
+ 4fe:	0e 94 25 02 	call	0x44a	; 0x44a <USART_init>
+	while(1){
+				//check to see if the RXC flag is risen if it is there is incoming text on the serial port
 				if ((UCSR0A&(1<<RXC0))){
- 506:	0f 2e       	mov	r0, r31
- 508:	f0 ec       	ldi	r31, 0xC0	; 192
- 50a:	cf 2e       	mov	r12, r31
- 50c:	d1 2c       	mov	r13, r1
- 50e:	f0 2d       	mov	r31, r0
- 510:	f6 01       	movw	r30, r12
- 512:	80 81       	ld	r24, Z
- 514:	88 23       	and	r24, r24
- 516:	e4 f7       	brge	.-8      	; 0x510 <main+0x52>
-					
-					
+ 502:	0f 2e       	mov	r0, r31
+ 504:	f0 ec       	ldi	r31, 0xC0	; 192
+ 506:	cf 2e       	mov	r12, r31
+ 508:	d1 2c       	mov	r13, r1
+ 50a:	f0 2d       	mov	r31, r0
+ 50c:	f6 01       	movw	r30, r12
+ 50e:	80 81       	ld	r24, Z
+ 510:	88 23       	and	r24, r24
+ 512:	e4 f7       	brge	.-8      	; 0x50c <main+0x4e>
+					//clear for new message
+					Lcd4_Clear();
+ 514:	0e 94 8d 01 	call	0x31a	; 0x31a <Lcd4_Clear>
+					//get the length of the incoming string and modify the string memory location setting it to the new string
 					i = USART_getstring(string);
  518:	ce 01       	movw	r24, r28
  51a:	01 96       	adiw	r24, 0x01	; 1
  51c:	0e 94 39 02 	call	0x472	; 0x472 <USART_getstring>
  520:	7c 01       	movw	r14, r24
+					//parrot incoming string (used for debugging)
 					USART_putstring(string);
  522:	ce 01       	movw	r24, r28
  524:	01 96       	adiw	r24, 0x01	; 1
@@ -752,20 +754,21 @@ int main(void){
 	__builtin_avr_delay_cycles(__ticks_dc);
  52a:	ff ef       	ldi	r31, 0xFF	; 255
  52c:	23 ed       	ldi	r18, 0xD3	; 211
- 52e:	30 e3       	ldi	r19, 0x30	; 48
+ 52e:	80 e3       	ldi	r24, 0x30	; 48
  530:	f1 50       	subi	r31, 0x01	; 1
  532:	20 40       	sbci	r18, 0x00	; 0
- 534:	30 40       	sbci	r19, 0x00	; 0
+ 534:	80 40       	sbci	r24, 0x00	; 0
  536:	e1 f7       	brne	.-8      	; 0x530 <main+0x72>
  538:	00 c0       	rjmp	.+0      	; 0x53a <main+0x7c>
  53a:	00 00       	nop
+					//wait a second then write the new string onto the lcd
 					_delay_ms(1000);
 					for(int j = 0 ; j < i-1; j ++){
  53c:	c7 01       	movw	r24, r14
  53e:	01 97       	sbiw	r24, 0x01	; 1
  540:	18 16       	cp	r1, r24
  542:	19 06       	cpc	r1, r25
- 544:	6c f4       	brge	.+26     	; 0x560 <main+0xa2>
+ 544:	1c f7       	brge	.-58     	; 0x50c <main+0x4e>
  546:	8e 01       	movw	r16, r28
  548:	0f 5f       	subi	r16, 0xFF	; 255
  54a:	1f 4f       	sbci	r17, 0xFF	; 255
@@ -776,35 +779,19 @@ int main(void){
  552:	8d 91       	ld	r24, X+
  554:	8d 01       	movw	r16, r26
  556:	0e 94 cb 01 	call	0x396	; 0x396 <Lcd4_Write_Char>
-					
-					
 					i = USART_getstring(string);
+					//parrot incoming string (used for debugging)
 					USART_putstring(string);
+					//wait a second then write the new string onto the lcd
 					_delay_ms(1000);
 					for(int j = 0 ; j < i-1; j ++){
  55a:	0e 15       	cp	r16, r14
  55c:	1f 05       	cpc	r17, r15
  55e:	c1 f7       	brne	.-16     	; 0x550 <main+0x92>
- 560:	ba ea       	ldi	r27, 0xAA	; 170
- 562:	ea e9       	ldi	r30, 0x9A	; 154
- 564:	fb e5       	ldi	r31, 0x5B	; 91
- 566:	26 e0       	ldi	r18, 0x06	; 6
- 568:	b1 50       	subi	r27, 0x01	; 1
- 56a:	e0 40       	sbci	r30, 0x00	; 0
- 56c:	f0 40       	sbci	r31, 0x00	; 0
- 56e:	20 40       	sbci	r18, 0x00	; 0
- 570:	d9 f7       	brne	.-10     	; 0x568 <main+0xaa>
- 572:	00 00       	nop
-						Lcd4_Write_Char(string[j]);
-						//
-					}
-					_delay_ms(40000);
-					Lcd4_Clear();
- 574:	0e 94 8d 01 	call	0x31a	; 0x31a <Lcd4_Clear>
- 578:	cb cf       	rjmp	.-106    	; 0x510 <main+0x52>
+ 560:	d5 cf       	rjmp	.-86     	; 0x50c <main+0x4e>
 
-0000057a <_exit>:
- 57a:	f8 94       	cli
+00000562 <_exit>:
+ 562:	f8 94       	cli
 
-0000057c <__stop_program>:
- 57c:	ff cf       	rjmp	.-2      	; 0x57c <__stop_program>
+00000564 <__stop_program>:
+ 564:	ff cf       	rjmp	.-2      	; 0x564 <__stop_program>

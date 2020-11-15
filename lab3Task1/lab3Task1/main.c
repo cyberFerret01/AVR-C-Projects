@@ -22,7 +22,7 @@ void USART_send(unsigned char data){
 	}
 
 void USART_putstring(char* fullstring){
-	
+	//keep sending until the next char has value 0 (it's null)
 	while (*fullstring != 0x00)
 	{
 		USART_send(*fullstring ++);
@@ -30,19 +30,19 @@ void USART_putstring(char* fullstring){
 }
 
 int main(){
-	
+	//initialize received char as 9 as it isn't a valid result
 	char ReceivedChar = '9';
-	DDRB = 0x20;
-	USART_init(); // USART initialization
+	DDRB = 0x20; //initialize pin 13 as an output for lamp
+	USART_init(); //start USART 
 	while(1){
 		ReceivedChar=USART_receive();// Wait until data is received
 		if(ReceivedChar=='0'){
-			PORTB &= ~(1 << 5);// Clear bit 4 to turn off LED
+			PORTB &= ~(1 << 5);// turn off lamp 13
 			_delay_ms(200);
 			USART_putstring("LED is off!\n");
 		}
 		if(ReceivedChar=='1'){
-			PORTB |= (1 << 5);// set bit 4 to turn on LED
+			PORTB |= (1 << 5);// turn on lamp 13
 			_delay_ms(200);
 			USART_putstring("LED is on!\n");
 		}
